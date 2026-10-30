@@ -1,0 +1,298 @@
+{
+  "name": "Tugas 1 - AI untuk Manajemen SDM - Wahyu Ahmad Yassin",
+  "nodes": [
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1vHjWaieBTB71b1TgB-Ez5pzCt4Rjoeet3Fhxy16UIRY",
+          "mode": "list",
+          "cachedResultName": "Onboarding Karyawan Baru (Jawaban)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vHjWaieBTB71b1TgB-Ez5pzCt4Rjoeet3Fhxy16UIRY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2016581403,
+          "mode": "list",
+          "cachedResultName": "Checklist",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vHjWaieBTB71b1TgB-Ez5pzCt4Rjoeet3Fhxy16UIRY/edit#gid=2016581403"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        144,
+        16
+      ],
+      "id": "cf98d195-f4ea-4cb3-8e3c-5c2633031826",
+      "name": "Checklist",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "T9eh1WhJRY3wZVHb",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "checklist",
+        "operation": "create",
+        "cardId": {
+          "__rl": true,
+          "value": "={{ $('Buat Kartu Onboarding').item.json.id }}",
+          "mode": "id"
+        },
+        "name": "={{ $('Checklist').item.json.Tugas }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        368,
+        16
+      ],
+      "id": "030f8c3b-050d-47ee-9f6c-aba25a617e52",
+      "name": "Create a checklist",
+      "credentials": {
+        "trelloApi": {
+          "id": "GHgypH9YHhGnuqg5",
+          "name": "Trello account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return $('Checklist').all().map(item => {\n  return {\n    json: {\n      tugas: item.json.Tugas,\n      created_card_id: $('Buat Kartu Onboarding').first().json.id\n    }\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        16
+      ],
+      "id": "13eefc04-d948-403f-b555-aedf823944c9",
+      "name": "Gabung Jadi 1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Normalisasi Data Karyawan').first().json.email }}",
+        "subject": "={{ 'Selamat Datang di Perusahaan, ' + $('Normalisasi Data Karyawan').first().json.fullName }}",
+        "message": "=<p>Halo {{ $('Normalisasi Data Karyawan').first().json.firstName }},</p>\n\n<p>Selamat datang di perusahaan! Kami sangat senang Anda bergabung sebagai <b>{{ $('Normalisasi Data Karyawan').first().json.position }}</b>.</p>\n\n<p>Tanggal mulai bekerja: <b>{{ $('Normalisasi Data Karyawan').first().json.startDate }}</b>.</p>\n\n<p>Berikut daftar tugas onboarding Anda:</p>\n\n<ul>\n{{ $('Checklist').all().map(i => '<li>' + i.json.Tugas + '</li>').join('') }}\n</ul>\n\n<p>Jika ada pertanyaan, silakan balas email ini.</p>\n\n<p>Salam hangat,<br>Tim HR</p>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        768,
+        16
+      ],
+      "id": "e9cd6f56-2e22-4c1f-bca1-d49f4fee70ac",
+      "name": "Send a message",
+      "webhookId": "a78fb1da-b692-478c-9620-fa5631314196",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "2vq3jrPfy2mGfkOH",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1vHjWaieBTB71b1TgB-Ez5pzCt4Rjoeet3Fhxy16UIRY",
+          "mode": "list",
+          "cachedResultName": "Onboarding Karyawan Baru (Jawaban)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vHjWaieBTB71b1TgB-Ez5pzCt4Rjoeet3Fhxy16UIRY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1404314165,
+          "mode": "list",
+          "cachedResultName": "Form responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1vHjWaieBTB71b1TgB-Ez5pzCt4Rjoeet3Fhxy16UIRY/edit#gid=1404314165"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -528,
+        16
+      ],
+      "id": "e3d00776-e591-46c5-9ddb-a2b3c05e738b",
+      "name": "Sheet Onboarding Karyawan",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "eMsMaHGaK8Q33Kq1",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "6bbf17db-a284-4f0e-ad22-a51dcdb33586",
+              "name": "firstName",
+              "value": "={{ $json['First Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "70234c0f-f800-46b0-bf4a-b6f09dcd4c77",
+              "name": "lastName",
+              "value": "={{ $json['Last Name'] }}",
+              "type": "string"
+            },
+            {
+              "id": "f5db827f-96b8-4010-aab4-5320b45e8746",
+              "name": "email",
+              "value": "={{ $json.Email }}",
+              "type": "string"
+            },
+            {
+              "id": "802d2061-406f-417b-a001-b6a7f941f01e",
+              "name": "startDate",
+              "value": "={{ DateTime.fromSeconds(($json[\"Start Date\"] - 25569) * 86400).toFormat(\"dd MMMM yyyy\") }}",
+              "type": "string"
+            },
+            {
+              "id": "f6181b8a-8fd0-4223-8fff-ff91b643b0bf",
+              "name": "position",
+              "value": "={{ $json.Position }}",
+              "type": "string"
+            },
+            {
+              "id": "123948ed-4346-414a-8327-ec7b90f9c615",
+              "name": "fullName",
+              "value": "={{ $json['Full Name'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -304,
+        16
+      ],
+      "id": "dafd7848-ea61-49ee-b8f8-b2c835f73f79",
+      "name": "Normalisasi Data Karyawan"
+    },
+    {
+      "parameters": {
+        "listId": "6ae3e4403a9905a332c2bf08",
+        "name": "={{ $json.fullName + \" - \" + $json.position }}",
+        "description": "={{ \"Nama: \" + $json.fullName + \"\\nEmail: \" + $json.email + \"\\nPosisi: \" + $json.position + \"\\nTanggal Mulai: \" + $json.startDate }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.trello",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        16
+      ],
+      "id": "d9000ac6-a754-4a82-b307-3c957960438c",
+      "name": "Buat Kartu Onboarding",
+      "credentials": {
+        "trelloApi": {
+          "id": "GHgypH9YHhGnuqg5",
+          "name": "Trello account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Checklist": {
+      "main": [
+        [
+          {
+            "node": "Create a checklist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a checklist": {
+      "main": [
+        [
+          {
+            "node": "Gabung Jadi 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gabung Jadi 1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sheet Onboarding Karyawan": {
+      "main": [
+        [
+          {
+            "node": "Normalisasi Data Karyawan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalisasi Data Karyawan": {
+      "main": [
+        [
+          {
+            "node": "Buat Kartu Onboarding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Buat Kartu Onboarding": {
+      "main": [
+        [
+          {
+            "node": "Checklist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "9229b628-d7b3-4eb6-aed6-21d6a0c2e89a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dc96f10ae7dc95d3c138575ba243a0a167923dbcb524841d451aadf9135d5fb3"
+  },
+  "nodeGroups": [],
+  "id": "Q1KH4EbHooSmlSEt",
+  "tags": []
+}
